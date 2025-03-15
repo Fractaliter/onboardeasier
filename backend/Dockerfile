@@ -44,12 +44,16 @@ ENV PROJECT_NAME=$PROJECT_NAME
 COPY ./scripts /app/scripts
 COPY ./pyproject.toml ./uv.lock ./alembic.ini /app/
 COPY ./app /app/app
+# Copy test script
+COPY ./scripts/test_db_connection.py /app/
+
+# Run database connection test before migrations
+RUN python /app/test_db_connection.py
 
 # Install project dependencies
 RUN uv sync
 
 # Run database migrations before starting the app
-RUN alembic upgrade head
 RUN sleep 5 && alembic upgrade head
 
 # **Use Gunicorn for production**
