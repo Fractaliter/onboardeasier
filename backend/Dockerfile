@@ -44,7 +44,7 @@ COPY ./pyproject.toml ./uv.lock ./alembic.ini /app/
 COPY ./app /app/app
 
 # Run database migrations before starting the app
-RUN sleep 5 && alembic upgrade head
+RUN /bin/sh -c 'until nc -z $POSTGRES_SERVER $POSTGRES_PORT; do echo "Waiting for database..."; sleep 2; done' && alembic upgrade head
 
 # **Use Gunicorn for production**
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "app.main:app", "--bind", "0.0.0.0:8000"]
