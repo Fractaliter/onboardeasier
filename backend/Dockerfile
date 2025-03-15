@@ -1,19 +1,3 @@
-FROM python:3.12.4
-
-ENV PYTHONUNBUFFERED=1
-
-WORKDIR /app/
-
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /uvx /bin/
-
-# Set path
-ENV PATH="/app/.venv/bin:$PATH"
-
-# Install dependencies **(without cache)**
-COPY uv.lock pyproject.toml /app/
-RUN uv sync --frozen --no-install-project
-
 # Set Python path
 ENV PYTHONPATH=/app
 # Set up environment variables explicitly for build stage
@@ -30,12 +14,12 @@ ARG PROJECT_NAME
 
 # Expose these env variables inside the container
 ENV DATABASE_URL=$DATABASE_URL
-ENV POSTGRES_PORT=$POSTGRES_PORT
 ENV POSTGRES_SERVER=$POSTGRES_SERVER
 ENV POSTGRES_USER=$POSTGRES_USER
 ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 ENV POSTGRES_DB=$POSTGRES_DB
 ENV FIRST_SUPERUSER=$FIRST_SUPERUSER
+ENV POSTGRES_PORT=$POSTGRES_PORT
 ENV FIRST_SUPERUSER_PASSWORD=$FIRST_SUPERUSER_PASSWORD
 ENV SECRET_KEY=$SECRET_KEY
 ENV PROJECT_NAME=$PROJECT_NAME
@@ -45,11 +29,12 @@ COPY ./scripts /app/scripts
 COPY ./pyproject.toml ./uv.lock ./alembic.ini /app/
 COPY ./app /app/app
 
-# Install Netcat (Choose one)
-RUN apt-get update && apt-get install -y netcat-openbsd
+# Install project dependencies
+RUN uv sync
 
-# Wait for PostgreSQL to be ready before running migrations
-RUN /bin/sh -c 'until nc -z $(echo $DATABASE_URL | sed -E "s/^.+@([^:]+):([0-9]+).+/\1 \2/"); do echo "Waiting for database..."; sleep 2; done' && alembic upgrade head
+# Run database migrations before starting the app
+RUN alembic upgrade head
+RUN sleep 5 && alembic upgrade head
 
 # **Use Gunicorn for production**
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "app.main:app", "--bind", "0.0.0.0:8000"]
