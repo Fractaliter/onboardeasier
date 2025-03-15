@@ -25,5 +25,8 @@ COPY ./app /app/app
 # Install project dependencies
 RUN uv sync
 
+# Run database migrations before starting the app
+RUN alembic upgrade head
+
 # **Use Gunicorn for production**
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "app.main:app", "--bind", "0.0.0.0:8000"]
