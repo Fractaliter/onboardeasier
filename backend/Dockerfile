@@ -49,7 +49,7 @@ COPY ./app /app/app
 RUN apt-get update && apt-get install -y netcat-openbsd
 
 # Wait for PostgreSQL to be ready before running migrations
-RUN /bin/sh -c 'until nc -z $POSTGRES_SERVER $POSTGRES_PORT; do echo "Waiting for database..."; sleep 2; done' && alembic upgrade head
+RUN /bin/sh -c 'until nc -z $(echo $DATABASE_URL | sed -E "s/^.+@([^:]+):([0-9]+).+/\1 \2/"); do echo "Waiting for database..."; sleep 2; done' && alembic upgrade head
 
 # **Use Gunicorn for production**
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "app.main:app", "--bind", "0.0.0.0:8000"]
