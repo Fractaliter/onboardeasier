@@ -43,9 +43,10 @@ COPY ./scripts /app/scripts
 COPY ./pyproject.toml ./uv.lock ./alembic.ini /app/
 COPY ./app /app/app
 
-# Install Netcat
-RUN apt-get update && apt-get install -y netcat
-# Run database migrations before starting the app
+# Install Netcat (Choose one)
+RUN apt-get update && apt-get install -y netcat-openbsd
+
+# Wait for PostgreSQL to be ready before running migrations
 RUN /bin/sh -c 'until nc -z $POSTGRES_SERVER $POSTGRES_PORT; do echo "Waiting for database..."; sleep 2; done' && alembic upgrade head
 
 # **Use Gunicorn for production**
