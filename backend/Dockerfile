@@ -1,3 +1,19 @@
+
+FROM python:3.12.4
+ 
+ ENV PYTHONUNBUFFERED=1
+ 
+ WORKDIR /app/
+ 
+ # Install uv
+ COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /uvx /bin/
+ 
+ # Set path
+ ENV PATH="/app/.venv/bin:$PATH"
+ 
+ # Install dependencies **(without cache)**
+ COPY uv.lock pyproject.toml /app/
+ RUN uv sync --frozen --no-install-project
 # Set Python path
 ENV PYTHONPATH=/app
 # Set up environment variables explicitly for build stage
