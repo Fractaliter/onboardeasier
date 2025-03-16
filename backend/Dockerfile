@@ -56,11 +56,12 @@ COPY ./app /app/app
 RUN uv sync
 
 
+# Run migrations
+RUN alembic upgrade head
+
 # Ensure the DB is ready before proceeding
 RUN python app/backend_pre_start.py
 
-# Run migrations
-RUN alembic upgrade head
 
 # Seed initial data into DB
 RUN python app/initial_data.py

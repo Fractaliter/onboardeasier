@@ -9,18 +9,8 @@ from app.core.db import engine
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-max_tries = 60 * 5  # 5 minutes
-wait_seconds = 1
-
-# Print environment variables for debugging
-def print_env_vars():
-    logger.info("🔍 DEBUG: Checking environment variables")
-    logger.info(f"🔹 DATABASE_URL: {os.getenv('DATABASE_URL')}")
-    logger.info(f"🔹 POSTGRES_SERVER: {os.getenv('POSTGRES_SERVER')}")
-    logger.info(f"🔹 POSTGRES_USER: {os.getenv('POSTGRES_USER')}")
-    logger.info(f"🔹 POSTGRES_PASSWORD: {os.getenv('POSTGRES_PASSWORD')}")
-    logger.info(f"🔹 POSTGRES_DB: {os.getenv('POSTGRES_DB')}")
-    logger.info(f"🔹 POSTGRES_PORT: {os.getenv('POSTGRES_PORT')}")
+max_tries = 60  # 5 minutes
+wait_seconds = 2
 
 @retry(
     stop=stop_after_attempt(max_tries),
@@ -38,7 +28,6 @@ def init(db_engine: Engine) -> None:
 
 def main() -> None:
     logger.info("🚀 Initializing service...")
-    print_env_vars()  # 🔥 Debug print environment variables
     init(engine)
     logger.info("✅ Service finished initializing!")
 
