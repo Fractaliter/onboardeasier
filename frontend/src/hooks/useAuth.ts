@@ -45,6 +45,7 @@ const useAuth = () => {
     const response = await LoginService.loginAccessToken({
       formData: data,
     })
+    console.log("🚀 API URL:", import.meta.env.VITE_API_URL);
     localStorage.setItem("access_token", response.access_token)
   }
 
