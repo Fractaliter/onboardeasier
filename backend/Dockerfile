@@ -55,9 +55,6 @@ COPY ./app /app/app
 # ✅ **Run `uv sync` to install dependencies**
 RUN uv sync
 
-# ✅ **Ensure DB is available before running Alembic**
-RUN /bin/sh -c 'until nc -z $POSTGRES_SERVER $POSTGRES_PORT; do echo "Waiting for database..."; sleep 2; done' \
-    && alembic upgrade head
 
 # ✅ **Use Gunicorn for production**
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "app.main:app", "--bind", "0.0.0.0:8000"]
