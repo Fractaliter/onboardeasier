@@ -7,6 +7,9 @@ ENV PYTHONUNBUFFERED=1
 # Set the working directory
 WORKDIR /app/
 
+# Install required system utilities
+RUN apt-get update && apt-get install -y netcat-openbsd
+
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /uvx /bin/
 
