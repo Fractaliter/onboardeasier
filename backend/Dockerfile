@@ -56,16 +56,5 @@ COPY ./app /app/app
 RUN uv sync
 
 
-# Run migrations
-RUN alembic upgrade head
-
-# Ensure the DB is ready before proceeding
-RUN python app/backend_pre_start.py
-
-
-# Seed initial data into DB
-RUN python app/initial_data.py
-
-
 # ✅ **Use Gunicorn for production**
 CMD ["gunicorn", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "app.main:app", "--bind", "0.0.0.0:8000"]
