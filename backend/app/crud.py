@@ -1,6 +1,6 @@
 import uuid
 from typing import Any, List, Optional
-
+from datetime import datetime
 from sqlmodel import Session, select
 
 from app.core.security import get_password_hash, verify_password
@@ -106,9 +106,6 @@ def add_member_to_project(*, session: Session, project_id: uuid.UUID, user_id: u
     session.refresh(db_member)
     return db_member
 
-
-
-
 def get_project_members(*, session: Session, project_id: uuid.UUID) -> List[ProjectMember]:
     statement = select(ProjectMember).where(ProjectMember.project_id == project_id)
     return session.exec(statement).all()
@@ -128,10 +125,19 @@ def remove_member_from_project(*, session: Session, project_id: uuid.UUID, user_
 
 # ---- TASK CRUD ----
 def create_task(
-    *, session: Session, project_id: uuid.UUID, title: str, description: Optional[str], assigned_member_id: Optional[uuid.UUID]
+    session: Session,
+    project_id: uuid.UUID,
+    title: str,
+    description: Optional[str],
+    assigned_member_id: Optional[uuid.UUID],
+    status: TaskStatusEnum = TaskStatusEnum.PENDING  # Default value provided
 ) -> Task:
     db_task = Task(
-        project_id=project_id, title=title, description=description, assigned_member_id=assigned_member_id, status=TaskStatusEnum.PENDING
+        project_id=project_id,
+        title=title,
+        description=description,
+        assigned_member_id=assigned_member_id,
+        status=status  # Use the provided status
     )
     session.add(db_task)
     session.commit()

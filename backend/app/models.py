@@ -139,6 +139,13 @@ class Project(ProjectBase, table=True):
     tasks: List["Task"] = Relationship(back_populates="project")
 
 
+class ProjectCreate(ProjectBase):
+    pass
+
+class ProjectUpdate(ProjectBase):
+    name: Optional[str] = Field(default=None, min_length=1, max_length=255)
+
+
 # ---- PROJECT MEMBERS ----
 class ProjectMember(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
@@ -149,6 +156,7 @@ class ProjectMember(SQLModel, table=True):
     # Relationships
     project: Project = Relationship(back_populates="members")
     user: User = Relationship(back_populates="project_memberships")
+    tasks: List["Task"] = Relationship(back_populates="assigned_member")
 
 
 # ---- TASKS ----
@@ -158,17 +166,26 @@ class TaskBase(SQLModel):
     status: TaskStatusEnum = Field(default=TaskStatusEnum.PENDING)
 
 
+class TaskCreate(TaskBase):
+    title: str
+    description: Optional[str] = None
+    assigned_member_id: Optional[uuid.UUID] = None  # Optional field
+
+class TaskUpdate(TaskBase):
+    title: str
+    description: Optional[str] = None
+    assigned_member_id: Optional[uuid.UUID] = None  # Optional field
+
 class Task(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     title: str = Field(max_length=255)
     description: Optional[str] = Field(default=None, max_length=500)
     status: TaskStatusEnum = Field(default=TaskStatusEnum.PENDING)
-
     project_id: uuid.UUID = Field(foreign_key="project.id", nullable=False, ondelete="CASCADE")
     assigned_member_id: Optional[uuid.UUID] = Field(foreign_key="projectmember.id", default=None, nullable=True, ondelete="SET NULL")
 
     project: Project = Relationship(back_populates="tasks")
-    assigned_member: Optional[ProjectMember] = Relationship()
+    assigned_member: Optional[ProjectMember] = Relationship(back_populates="tasks")
 
     comments: List["TaskComment"] = Relationship(back_populates="task")
 
@@ -193,9 +210,16 @@ class ProjectPublic(SQLModel):
     owner_id: uuid.UUID
 
 
+class ProjectsPublic(SQLModel):
+    data: List[ProjectPublic]
+    count: int
+
+
 class TaskPublic(SQLModel):
     id: uuid.UUID
     title: str
     status: TaskStatusEnum
     project_id: uuid.UUID
     assigned_member_id: Optional[uuid.UUID]
+
+    

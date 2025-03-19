@@ -44,6 +44,12 @@ import type {
   UtilsTestEmailData,
   UtilsTestEmailResponse,
   UtilsHealthCheckResponse,
+  ProjectPublic,
+  ProjectsReadProjectData,
+  ProjectsReadProjectResponse,
+  ProjectsCreateProjectData,
+  ProjectsUpdateProjectData,
+  ProjectsUpdateProjectResponse
 } from "./types.gen"
 
 export class ItemsService {
@@ -520,4 +526,107 @@ export class UtilsService {
       url: "/api/v1/utils/health-check/",
     })
   }
+}
+
+export class ProjectsService {
+  /**
+   * Create Project
+   * Creates a new project.
+   * @param data The data for the request.
+   * @param data.name The name of the project.
+   * @param data.description The description of the project.
+   * @param data.ownerId The ID of the project owner.
+   * @returns ProjectPublic Successful Response
+   * @throws ApiError
+   */
+  public static createProject(
+    data: ProjectsCreateProjectData,
+  ): CancelablePromise<ProjectPublic> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/projects/',
+      body: data.requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: 'Validation Error',
+      },
+    });
+  }
+
+
+  /**
+   * Get Project
+   * Retrieves a project by its ID.
+   * @param projectId The ID of the project to retrieve.
+   * @returns ProjectPublic Successful Response
+   * @throws ApiError
+   */
+  public static getProject(
+    projectId: string,
+  ): CancelablePromise<ProjectPublic> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: `/api/v1/projects/${projectId}/`,
+      errors: {
+        404: 'Project Not Found',
+      },
+    });
+  }
+
+  /**
+   * List Projects
+   * Retrieves a list of all projects.
+   * @returns ProjectPublic[] Successful Response
+   * @throws ApiError
+   */
+  public static readProjects(
+    data: ProjectsReadProjectData = {},
+  ): CancelablePromise<ProjectsReadProjectResponse> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/projects/",
+      query: {
+        skip: data.skip,
+        limit: data.limit,
+      },
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+
+  /**
+   * Delete Project
+   * Deletes a project by its ID.
+   * @param projectId The ID of the project to delete.
+   * @returns void Successful Response
+   * @throws ApiError
+   */
+  public static deleteProject(projectId: string): CancelablePromise<void> {
+    return __request(OpenAPI, {
+      method: 'DELETE',
+      url: `/api/v1/projects/${projectId}/`,
+      errors: {
+        404: 'Project Not Found',
+      },
+    });
+  }
+
+  
+public static updateProject(
+  projectId: string, // Ensure projectId is a string
+  data: ProjectsUpdateProjectData,
+): CancelablePromise<ProjectsUpdateProjectResponse> {
+  return __request(OpenAPI, {
+    method: "PATCH",
+    url: `/api/v1/projects/${projectId}`, // Correctly embed projectId
+    body: data.requestBody,
+    mediaType: "application/json",
+    errors: {
+      422: "Validation Error",
+    },
+  });
+}
+
 }
