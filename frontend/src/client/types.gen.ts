@@ -219,3 +219,45 @@ export type UtilsTestEmailData = {
 export type UtilsTestEmailResponse = Message
 
 export type UtilsHealthCheckResponse = boolean
+
+export type ProjectCreate = {
+  name: string;
+  description?: string | null;
+};
+
+export type ProjectPublic = {
+  id: string;
+  name: string;
+  description?: string | null;
+  owner_id: string;
+};
+
+export type ProjectsPublic = {
+  data: Array<ProjectPublic>;
+  count: number;
+};
+
+export type ProjectUpdate = {
+  name?: string | null;
+  description?: string | null;
+};
+
+export type ProjectsReadProjectData = {
+  limit?: number
+  skip?: number
+}
+
+export type ProjectsReadProjectResponse = ProjectsPublic
+
+export type ProjectsCreateProjectData = {
+  requestBody: ProjectCreate
+}
+
+export type ProjectsCreateProjectResponse = ProjectPublic
+
+export type ProjectsUpdateProjectData = {
+  requestBody: ProjectUpdate
+  projectId: string
+}
+
+export type ProjectsUpdateProjectResponse = ProjectPublic
