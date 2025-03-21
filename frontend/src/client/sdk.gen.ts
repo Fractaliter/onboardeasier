@@ -49,7 +49,11 @@ import type {
   ProjectsReadProjectResponse,
   ProjectsCreateProjectData,
   ProjectsUpdateProjectData,
-  ProjectsUpdateProjectResponse
+  ProjectsUpdateProjectResponse,
+  TaskPublic,
+  TasksPublic,
+  TaskCreate,
+  TaskUpdate
 } from "./types.gen"
 
 export class ItemsService {
@@ -628,5 +632,100 @@ public static updateProject(
     },
   });
 }
-
 }
+export class TasksService {
+  /**
+   * Read Tasks
+   * Retrieve tasks.
+   * @param data The data for the request.
+   * @param data.skip
+   * @param data.limit
+   * @returns TasksPublic Successful Response
+   * @throws ApiError
+   */
+  public static readTasks(params: { skip?: number; limit?: number } = {}): CancelablePromise<{ data: TasksPublic; count: number }> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/tasks/',
+      query: params,
+      errors: {
+        422: 'Validation Error',
+      },
+    });
+  }
+  /**
+   * Create Task
+   * Create new task.
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns TaskPublic Successful Response
+   * @throws ApiError
+   */
+  public static createTask(data: TaskCreate): CancelablePromise<TaskPublic> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/tasks/',
+      body: data,
+      mediaType: 'application/json',
+      errors: {
+        422: 'Validation Error',
+      },
+    });
+  }
+
+  /**
+   * Read Task
+   * Get task by ID.
+   * @param data The data for the request.
+   * @param data.id
+   * @returns TaskPublic Successful Response
+   * @throws ApiError
+   */
+  public static readTask(
+    data: { id: string }
+  ): CancelablePromise<TaskPublic> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/tasks/{id}',
+      path: {
+        id: data.id,
+      },
+      errors: {
+        422: 'Validation Error',
+      },
+    });
+  }
+
+  /**
+   * Update Task
+   * Update a task.
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.requestBody
+   * @returns TaskPublic Successful Response
+   * @throws ApiError
+   */
+  public static updateTask(id: string, data: TaskUpdate): CancelablePromise<TaskPublic> {
+    return __request(OpenAPI, {
+      method: 'PUT',
+      url: `/api/v1/tasks/${id}`,
+      body: data,
+      mediaType: 'application/json',
+      errors: {
+        422: 'Validation Error',
+      },
+    });
+  }
+
+  public static deleteTask(id: string): CancelablePromise<void> {
+    return __request(OpenAPI, {
+      method: 'DELETE',
+      url: `/api/v1/tasks/${id}`,
+      errors: {
+        422: 'Validation Error',
+      },
+    });
+  }
+}
+
+

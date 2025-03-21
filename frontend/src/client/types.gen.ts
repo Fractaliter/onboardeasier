@@ -261,3 +261,55 @@ export type ProjectsUpdateProjectData = {
 }
 
 export type ProjectsUpdateProjectResponse = ProjectPublic
+
+// Define the structure of a task
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  status: TaskStatusEnum;
+  projectId: string;
+  assignedMemberId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Enum representing possible task statuses
+export enum TaskStatusEnum {
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+}
+
+// Type for the response when retrieving multiple tasks
+export type TasksPublic = Task[];
+
+// Type for creating a new task
+export type TaskCreate = {
+  title: string;
+  description?: string;
+  projectId: string;
+  assignedMemberId?: string;
+  status: TaskStatusEnum;
+}
+
+// Type for updating an existing task
+export type TaskUpdate = {
+  title?: string;
+  description?: string;
+  status?: TaskStatusEnum;
+  assignedMemberId?: string;
+}
+
+// Type for the response when retrieving a single task
+export type TaskPublic ={
+  id: string;
+  title: string;
+  description?: string;
+  status: TaskStatusEnum;
+  projectId: string;
+  assignedMemberId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
