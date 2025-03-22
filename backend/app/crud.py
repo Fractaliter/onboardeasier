@@ -145,6 +145,10 @@ def create_task(
     return db_task
 
 
+def list_tasks(*, session: Session) -> List[Task]:
+    statement = select(Task)
+    return session.exec(statement).all()
+
 def get_task_by_id(*, session: Session, task_id: uuid.UUID) -> Optional[Task]:
     return session.get(Task, task_id)
 
