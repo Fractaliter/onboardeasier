@@ -53,7 +53,7 @@ import type {
   TaskPublic,
   TasksPublic,
   TaskCreate,
-  TaskUpdate
+  TasksUpdateTaskData
 } from "./types.gen"
 
 export class ItemsService {
@@ -663,8 +663,11 @@ export class TasksService {
    */
   public static createTask(data: TaskCreate): CancelablePromise<TaskPublic> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/tasks/',
+      method: 'POST', 
+      url: "/api/v1/tasks/{project_id}",
+      path: {
+        project_id: data.projectId,
+      },
       body: data,
       mediaType: 'application/json',
       errors: {
@@ -705,18 +708,21 @@ export class TasksService {
    * @returns TaskPublic Successful Response
    * @throws ApiError
    */
-  public static updateTask(id: string, data: TaskUpdate): CancelablePromise<TaskPublic> {
+  public static updateTask(
+    id: string, 
+    data: TasksUpdateTaskData
+  ): CancelablePromise<TaskPublic> {
     return __request(OpenAPI, {
-      method: 'PUT',
+      method: 'PATCH',
       url: `/api/v1/tasks/${id}`,
-      body: data,
+      body: data.requestBody,
       mediaType: 'application/json',
       errors: {
         422: 'Validation Error',
       },
     });
   }
-
+  
   public static deleteTask(id: string): CancelablePromise<void> {
     return __request(OpenAPI, {
       method: 'DELETE',

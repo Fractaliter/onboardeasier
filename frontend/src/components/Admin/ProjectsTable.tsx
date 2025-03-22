@@ -1,4 +1,3 @@
-// ProjectsTable.tsx
 import { Flex, Table } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectsService } from "@/client";

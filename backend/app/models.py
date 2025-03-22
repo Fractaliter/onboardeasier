@@ -219,7 +219,13 @@ class TaskPublic(SQLModel):
     id: uuid.UUID
     title: str
     status: TaskStatusEnum
+    description: Optional[str]
     project_id: uuid.UUID
     assigned_member_id: Optional[uuid.UUID]
+
+
+class TasksPublic(SQLModel):
+    data: List[TaskPublic]
+    count: int
 
     

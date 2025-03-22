@@ -44,8 +44,9 @@ const TasksTable: React.FC<TasksTableProps> = ({ taskPage, setTaskPage }) => {
       <Table.Root size={{ base: 'sm', md: 'md' }}>
         <Table.Header>
           <Table.Row>
+          <Table.ColumnHeader w="sm">Project</Table.ColumnHeader>
+          <Table.ColumnHeader w="sm">Description</Table.ColumnHeader>
             <Table.ColumnHeader w="sm">Title</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Description</Table.ColumnHeader>
             <Table.ColumnHeader w="sm">Status</Table.ColumnHeader>
             <Table.ColumnHeader w="sm">Assigned Member</Table.ColumnHeader>
             <Table.ColumnHeader w="sm">Actions</Table.ColumnHeader>
@@ -54,8 +55,9 @@ const TasksTable: React.FC<TasksTableProps> = ({ taskPage, setTaskPage }) => {
         <Table.Body>
           {tasks.map((task) => (
             <Table.Row key={task.id} opacity={isPlaceholderData ? 0.5 : 1}>
+              <Table.Cell>{task.projectId}</Table.Cell>
+              <Table.Cell>{task.description}</Table.Cell>
               <Table.Cell>{task.title}</Table.Cell>
-              <Table.Cell>{task.description || 'N/A'}</Table.Cell>
               <Table.Cell>{task.status}</Table.Cell>
               <Table.Cell>{task.assignedMemberId || 'Unassigned'}</Table.Cell>
               <Table.Cell>

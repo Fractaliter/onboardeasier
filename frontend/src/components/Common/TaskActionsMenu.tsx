@@ -2,12 +2,14 @@ import { IconButton } from "@chakra-ui/react"
 import { BsThreeDotsVertical } from "react-icons/bs"
 import { MenuContent, MenuRoot, MenuTrigger } from "../ui/menu"
 import type { TaskPublic } from "@/client"
+import DeleteTask from "../Onboarding/DeleteTask"
+import EditTask from "../Onboarding/EditTask"
 
 interface TaskActionsMenuProps {
-  task: TaskPublic;
+  task: TaskPublic
 }
 
-export const TaskActionsMenu = ({ }: TaskActionsMenuProps) => {
+export const TaskActionsMenu = ({ task}: TaskActionsMenuProps) => {
     return (
         <MenuRoot>
           <MenuTrigger asChild>
@@ -16,12 +18,8 @@ export const TaskActionsMenu = ({ }: TaskActionsMenuProps) => {
             </IconButton>
           </MenuTrigger>
           <MenuContent>
-            <IconButton variant="ghost" color="inherit">
-              Edit
-            </IconButton>
-            <IconButton variant="ghost" color="inherit">
-              Delete
-            </IconButton>
+            <EditTask Task={task} />
+            <DeleteTask id={task.id} />
           </MenuContent>
         </MenuRoot>
       )

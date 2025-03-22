@@ -1,12 +1,10 @@
-import React from "react";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm} from 'react-hook-form';
 import {
   Button,
   DialogActionTrigger,
   DialogTitle,
   Input,
-  Select,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -35,14 +33,12 @@ const AddTask = () => {
     register,
     handleSubmit,
     reset,
-    control,
     formState: { errors, isValid, isSubmitting },
   } = useForm<TaskCreate>({
     mode: 'onBlur',
     criteriaMode: 'all',
     defaultValues: {
       title: '',
-      description: '',
       projectId: '',
       assignedMemberId: '',
       status: TaskStatusEnum.PENDING // Ensure 'status' is included
@@ -106,19 +102,6 @@ const AddTask = () => {
               </Field>
 
               <Field
-                invalid={!!errors.description}
-                errorText={errors.description?.message}
-                label='Description'
-              >
-                <Input
-                  id='description'
-                  {...register('description')}
-                  placeholder='Description'
-                  type='text'
-                />
-              </Field>
-
-              <Field
                 required
                 invalid={!!errors.projectId}
                 errorText={errors.projectId?.message}
@@ -157,6 +140,20 @@ const AddTask = () => {
                 id='status'
                 {...register('status')}
                 placeholder='status'
+                type='text'
+              />
+              </Field>
+
+              <Field
+                required
+                invalid={!!errors.description}
+                errorText={errors.description?.message}
+                label='Description'
+              >
+              <Input
+                id='description'
+                {...register('description')}
+                placeholder='description'
                 type='text'
               />
               </Field>

@@ -7,6 +7,7 @@ from app.models import (
     ProjectMember,
     Task,
     TaskPublic,
+    TasksPublic,
     TaskCreate,
     TaskUpdate,
     TaskComment,
@@ -18,19 +19,24 @@ from app.crud import (
     delete_task,
     add_task_comment,
     get_comments_for_task,
+    get_project_by_id,
+    list_tasks
 )
 
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 # ---- TASK ENDPOINTS ----
-@router.get("/", response_model=List[TaskPublic])
-def get_all_tasks(*, session: SessionDep) -> List[TaskPublic]:
-    tasks = session.exec(select(Task)).all()
-    return tasks
+@router.get("/", response_model=TasksPublic)
+def read_projects(session: SessionDep, current_user: CurrentUser) -> Any:
+    """Retrieve all tasks."""
+    
+    count_statement = select(func.count()).select_from(Task)
+    count = session.exec(count_statement).one()
+    return TasksPublic(data=list_tasks(session=session), count=count)
 
 
-@router.post("/{project_id}/tasks", response_model=TaskPublic)
+@router.post("/{project_id}", response_model=TaskPublic)
 def create_new_task(session: SessionDep, current_user: CurrentUser, project_id: uuid.UUID, task_in: TaskCreate) -> Any:
     """Create a task in a project. Only project owners or managers can create tasks."""
     project = get_project_by_id(session=session, project_id=project_id)
@@ -129,3 +135,34 @@ def get_task_comments(session: SessionDep, current_user: CurrentUser, task_id: u
 
     return get_comments_for_task(session=session, task_id=task_id)
 
+@router.patch(
+    "/{task_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+    response_model=TaskPublic,
+)
+def update_task(
+    *,
+    session: SessionDep,
+    task_id: uuid.UUID,
+    task_in: TaskUpdate,
+) -> Any:
+    """db_task
+    Update a project.
+    """
+    # Retrieve the existing project
+    db_task = session.get(Task, task_id)
+    if not db_task:
+        raise HTTPException(
+            status_code=404,
+            detail="The task with this ID does not exist in the system",
+        )
+
+    # Update the project's attributes
+    task_data = task_in.dict(exclude_unset=True)
+    for key, value in task_data.items():
+        setattr(db_task, key, value)
+
+    session.add(db_task)
+    session.commit()
+    session.refresh(db_task)
+    return db_task
